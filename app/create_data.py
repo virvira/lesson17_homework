@@ -7,35 +7,14 @@ from flask_restx import Api, Resource
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow import Schema, fields
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+from app import db
+from app.models import Movie, Director, Genre
 
+# app = Flask(__name__)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy(app)
 
-class Movie(db.Model):
-    __tablename__ = 'movie'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255))
-    description = db.Column(db.String(255))
-    trailer = db.Column(db.String(255))
-    year = db.Column(db.Integer)
-    rating = db.Column(db.Integer)
-    genre_id = db.Column(db.Integer, db.ForeignKey("genre.id"))
-    genre = db.relationship("Genre")
-    director_id = db.Column(db.Integer, db.ForeignKey("director.id"))
-    director = db.relationship("Director")
-
-
-class Director(db.Model):
-    __tablename__ = 'director'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-
-class Genre(db.Model):
-    __tablename__ = 'genre'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
 
 db.drop_all()
 db.create_all()
@@ -44,7 +23,7 @@ db.create_all()
 data = {
     "movies": [{
         "title": "Йеллоустоун",
-        "description": "Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»",
+        "description": "Владелец ранчо пытается сохранить",
         "trailer": "https://www.youtube.com/watch?v=UKei_d0cbP4",
         "year": 2018,
         "rating": 8.6,
@@ -62,7 +41,7 @@ data = {
         "pk": 2
     }, {
         "title": "Вооружен и очень опасен",
-        "description": "События происходят в конце XIX века на Диком Западе, в Америке. В основе сюжета — сложные перипетии жизни работяги — старателя Габриэля Конроя. Найдя нефть на своем участке, он познает и счастье, и разочарование, и опасность, и отчаяние...",
+        "description": "События происходят в конце XIX века ",
         "trailer": "https://www.youtube.com/watch?v=hLA5631F-jo",
         "year": 1978,
         "rating": 6,
@@ -143,7 +122,7 @@ data = {
         "pk": 11
     }, {
         "title": "Дюна",
-        "description": "Наследник знаменитого дома Атрейдесов Пол отправляется вместе с семьей на одну из самых опасных планет во Вселенной — Арракис. Здесь нет ничего, кроме песка, палящего солнца, гигантских чудовищ и основной причины межгалактических конфликтов — невероятно ценного ресурса, который называется меланж. В результате захвата власти Пол вынужден бежать и скрываться, и это становится началом его эпического путешествия. Враждебный мир Арракиса приготовил для него множество тяжелых испытаний, но только тот, кто готов взглянуть в глаза своему страху, достоин стать избранным.",
+        "description": "Наследник знаменитого дома Атрейдесов Пол",
         "trailer": "https://www.youtube.com/watch?v=DOlTmIhEsg0",
         "year": 2021,
         "rating": 8.4,
