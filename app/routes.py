@@ -38,10 +38,15 @@ class MoviesView(Resource):
 
     def post(self):
         req_json = request.json
-        new_movie = Movie(**req_json)
-        with db.session.begin():
-            db.session.add(new_movie)
-        return '', 201
+        try:
+            new_movie = Movie(**req_json)
+            with db.session.begin():
+                db.session.add(new_movie)
+            return '', 201
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            return e, 200
 
 
 @movie_ns.route('/<int:mid>')
@@ -53,6 +58,20 @@ class MovieView(Resource):
     def put(self, mid):
         req_json = request.json
         movie = Movie.query.get(mid)
+
+        required_fields = [
+                'title',
+                'description',
+                'trailer',
+                'year',
+                'rating',
+                'genre_id',
+                'director_id'
+            ]
+
+        for field in required_fields:
+            if field not in req_json:
+                return f'Поле {field} обязательно', 400
 
         movie.title = req_json.get('title')
         movie.description = req_json.get('description')
@@ -68,11 +87,18 @@ class MovieView(Resource):
         return '', 204
 
     def delete(self, mid):
-        movie = Movie.query.get(mid)
-        db.session.delete(movie)
-        db.session.commit()
+        try:
+            movie = Movie.query.get(mid)
+            db.session.delete(movie)
+            db.session.commit()
 
-        return '', 204
+            return '', 204
+
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+            return e, 200
 
 
 @director_ns.route('/')
@@ -84,10 +110,19 @@ class DirectorsView(Resource):
 
     def post(self):
         req_json = request.json
-        new_director = Director(**req_json)
-        with db.session.begin():
-            db.session.add(new_director)
-        return '', 201
+        try:
+            new_director = Director(**req_json)
+            with db.session.begin():
+                db.session.add(new_director)
+
+            return '', 201
+
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+            return e, 200
+
 
 
 @director_ns.route('/<int:did>')
@@ -100,6 +135,15 @@ class DirectorView(Resource):
     def put(self, did):
         req_json = request.json
         director = Director.query.get(did)
+
+        required_fields = [
+            'name'
+        ]
+
+        for field in required_fields:
+            if field not in req_json:
+                return f'Поле {field} обязательно', 400
+
         director.name = req_json.get('name')
 
         db.session.add(director)
@@ -108,11 +152,18 @@ class DirectorView(Resource):
         return '', 204
 
     def delete(self, did):
-        director = Director.query.get(did)
-        db.session.delete(director)
-        db.session.commit()
+        try:
+            director = Director.query.get(did)
+            db.session.delete(director)
+            db.session.commit()
 
-        return '', 204
+            return '', 204
+
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+            return e, 200
 
 
 @genre_ns.route('/')
@@ -124,11 +175,18 @@ class GenresView(Resource):
 
     def post(self):
         req_json = request.json
-        new_genre = Genre(**req_json)
-        with db.session.begin():
-            db.session.add(new_genre)
+        try:
+            new_genre = Genre(**req_json)
+            with db.session.begin():
+                db.session.add(new_genre)
 
-        return '', 201
+            return '', 201
+
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+            return e, 200
 
 
 @genre_ns.route('/<int:gid>')
@@ -142,6 +200,14 @@ class GenreView(Resource):
         req_json = request.json
         genre = Genre.query.get(gid)
 
+        required_fields = [
+            'name'
+        ]
+
+        for field in required_fields:
+            if field not in req_json:
+                return f'Поле {field} обязательно', 400
+
         genre.name = req_json.get('name')
 
         db.session.add(genre)
@@ -150,8 +216,15 @@ class GenreView(Resource):
         return '', 204
 
     def delete(self, gid):
-        genre = Genre.query.get(gid)
-        db.session.delete(genre)
-        db.session.commit()
+        try:
+            genre = Genre.query.get(gid)
+            db.session.delete(genre)
+            db.session.commit()
 
-        return '', 204
+            return '', 204
+
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+            return e, 200
