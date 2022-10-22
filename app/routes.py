@@ -44,15 +44,25 @@ class MoviesView(Resource):
                 db.session.add(new_movie)
             return '', 201
         except Exception as e:
-            print(e)
-            db.session.rollback()
-            return e, 200
+            return app.response_class(
+                e,
+                mimetype='text/plain',
+                status=400
+            )
 
 
 @movie_ns.route('/<int:mid>')
 class MovieView(Resource):
     def get(self, mid):
         movie = Movie.query.get(mid)
+
+        if movie is None:
+            return app.response_class(
+                "Movie not found",
+                mimetype='text/plain',
+                status=404
+            )
+
         return movie_schema.dump(movie), 200
 
     def put(self, mid):
@@ -87,18 +97,19 @@ class MovieView(Resource):
         return '', 204
 
     def delete(self, mid):
-        try:
-            movie = Movie.query.get(mid)
-            db.session.delete(movie)
-            db.session.commit()
+        movie = Movie.query.get(mid)
 
-            return '', 204
+        if movie is None:
+            return app.response_class(
+                "Movie not found",
+                mimetype='text/plain',
+                status=404
+            )
 
-        except Exception as e:
-            print(e)
-            db.session.rollback()
+        db.session.delete(movie)
+        db.session.commit()
 
-            return e, 200
+        return '', 204
 
 
 @director_ns.route('/')
@@ -118,17 +129,24 @@ class DirectorsView(Resource):
             return '', 201
 
         except Exception as e:
-            print(e)
-            db.session.rollback()
-
-            return e, 200
-
+            return app.response_class(
+                e,
+                mimetype='text/plain',
+                status=400
+            )
 
 
 @director_ns.route('/<int:did>')
 class DirectorView(Resource):
     def get(self, did):
         director = Director.query.get(did)
+
+        if director is None:
+            return app.response_class(
+                "Director not found",
+                mimetype='text/plain',
+                status=404
+            )
 
         return director_schema.dump(director), 200
 
@@ -152,18 +170,19 @@ class DirectorView(Resource):
         return '', 204
 
     def delete(self, did):
-        try:
-            director = Director.query.get(did)
-            db.session.delete(director)
-            db.session.commit()
+        director = Director.query.get(did)
 
-            return '', 204
+        if director is None:
+            return app.response_class(
+                "Director not found",
+                mimetype='text/plain',
+                status=404
+            )
 
-        except Exception as e:
-            print(e)
-            db.session.rollback()
+        db.session.delete(director)
+        db.session.commit()
 
-            return e, 200
+        return '', 204
 
 
 @genre_ns.route('/')
@@ -183,16 +202,24 @@ class GenresView(Resource):
             return '', 201
 
         except Exception as e:
-            print(e)
-            db.session.rollback()
-
-            return e, 200
+            return app.response_class(
+                e,
+                mimetype='text/plain',
+                status=400
+            )
 
 
 @genre_ns.route('/<int:gid>')
 class GenreView(Resource):
     def get(self, gid):
         genre = Genre.query.get(gid)
+
+        if genre is None:
+            return app.response_class(
+                "Director not found",
+                mimetype='text/plain',
+                status=404
+            )
 
         return genre_schema.dump(genre), 200
 
@@ -216,15 +243,17 @@ class GenreView(Resource):
         return '', 204
 
     def delete(self, gid):
-        try:
-            genre = Genre.query.get(gid)
-            db.session.delete(genre)
-            db.session.commit()
+        genre = Genre.query.get(gid)
 
-            return '', 204
+        if genre is None:
+            return app.response_class(
+                "Genre not found",
+                mimetype='text/plain',
+                status=404
+            )
 
-        except Exception as e:
-            print(e)
-            db.session.rollback()
+        db.session.delete(genre)
+        db.session.commit()
 
-            return e, 200
+        return '', 204
+
