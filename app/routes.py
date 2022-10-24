@@ -42,7 +42,7 @@ class MoviesView(Resource):
             new_movie = Movie(**req_json)
             with db.session.begin():
                 db.session.add(new_movie)
-            return '', 201
+            return "", 201
         except Exception as e:
             return {"error": f"{e}"}, 400
 
@@ -147,7 +147,7 @@ class DirectorView(Resource):
         db.session.add(director)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
     def delete(self, did):
         director = Director.query.get(did)
@@ -158,7 +158,7 @@ class DirectorView(Resource):
         db.session.delete(director)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
 
 @genre_ns.route('/')
