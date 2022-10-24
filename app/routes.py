@@ -44,11 +44,7 @@ class MoviesView(Resource):
                 db.session.add(new_movie)
             return '', 201
         except Exception as e:
-            return app.response_class(
-                e,
-                mimetype='text/plain',
-                status=400
-            )
+            return {"error": f"{e}"}, 400
 
 
 @movie_ns.route('/<int:mid>')
@@ -57,11 +53,7 @@ class MovieView(Resource):
         movie = Movie.query.get(mid)
 
         if movie is None:
-            return app.response_class(
-                "Movie not found",
-                mimetype='text/plain',
-                status=404
-            )
+            return {"error": "Movie not found"}, 404
 
         return movie_schema.dump(movie), 200
 
@@ -81,7 +73,7 @@ class MovieView(Resource):
 
         for field in required_fields:
             if field not in req_json:
-                return f'Поле {field} обязательно', 400
+                return {"error": f"Поле {field} обязательно"}, 400
 
         movie.title = req_json.get('title')
         movie.description = req_json.get('description')
@@ -94,22 +86,18 @@ class MovieView(Resource):
         db.session.add(movie)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
     def delete(self, mid):
         movie = Movie.query.get(mid)
 
         if movie is None:
-            return app.response_class(
-                "Movie not found",
-                mimetype='text/plain',
-                status=404
-            )
+            return {"error": "Movie not found"}, 404
 
         db.session.delete(movie)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
 
 @director_ns.route('/')
@@ -126,14 +114,10 @@ class DirectorsView(Resource):
             with db.session.begin():
                 db.session.add(new_director)
 
-            return '', 201
+            return "", 201
 
         except Exception as e:
-            return app.response_class(
-                e,
-                mimetype='text/plain',
-                status=400
-            )
+            return {"error": f"{e}"}
 
 
 @director_ns.route('/<int:did>')
@@ -142,11 +126,7 @@ class DirectorView(Resource):
         director = Director.query.get(did)
 
         if director is None:
-            return app.response_class(
-                "Director not found",
-                mimetype='text/plain',
-                status=404
-            )
+            return {"error": "Director not found"}, 404
 
         return director_schema.dump(director), 200
 
@@ -160,7 +140,7 @@ class DirectorView(Resource):
 
         for field in required_fields:
             if field not in req_json:
-                return f'Поле {field} обязательно', 400
+                return {"error": f"Поле {field} обязательно"}, 400
 
         director.name = req_json.get('name')
 
@@ -173,11 +153,7 @@ class DirectorView(Resource):
         director = Director.query.get(did)
 
         if director is None:
-            return app.response_class(
-                "Director not found",
-                mimetype='text/plain',
-                status=404
-            )
+            return {"error": "Director not found"}, 404
 
         db.session.delete(director)
         db.session.commit()
@@ -199,14 +175,10 @@ class GenresView(Resource):
             with db.session.begin():
                 db.session.add(new_genre)
 
-            return '', 201
+            return "", 201
 
         except Exception as e:
-            return app.response_class(
-                e,
-                mimetype='text/plain',
-                status=400
-            )
+            return {"error": f"{e}"}
 
 
 @genre_ns.route('/<int:gid>')
@@ -215,11 +187,7 @@ class GenreView(Resource):
         genre = Genre.query.get(gid)
 
         if genre is None:
-            return app.response_class(
-                "Director not found",
-                mimetype='text/plain',
-                status=404
-            )
+            return {"error": "Genre not found"}, 404
 
         return genre_schema.dump(genre), 200
 
@@ -233,27 +201,23 @@ class GenreView(Resource):
 
         for field in required_fields:
             if field not in req_json:
-                return f'Поле {field} обязательно', 400
+                return {"error": f"Поле {field} обязательно"}, 400
 
         genre.name = req_json.get('name')
 
         db.session.add(genre)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
     def delete(self, gid):
         genre = Genre.query.get(gid)
 
         if genre is None:
-            return app.response_class(
-                "Genre not found",
-                mimetype='text/plain',
-                status=404
-            )
+            return {"error": "Genre not found"}, 404
 
         db.session.delete(genre)
         db.session.commit()
 
-        return '', 204
+        return "", 204
 
